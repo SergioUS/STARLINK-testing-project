@@ -1,6 +1,6 @@
 ## StarLink Testing Project
 
-![StarLink](https://github.com/LanSvet/Zadachki-Sololearn/blob/main/01_Documentation/starlink_image.jpg?raw=true)
+![StarLink](https://starwalk.space/gallery/images/starlink-composite/1140x641.jpg)
 
 ### **We are exciting to introduce our _StarLink Testing Project!_**
 
