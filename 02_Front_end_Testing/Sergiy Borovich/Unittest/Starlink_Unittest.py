@@ -24,6 +24,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 
 
+
 def delay():
     time.sleep(random.randint(1, 3))
 

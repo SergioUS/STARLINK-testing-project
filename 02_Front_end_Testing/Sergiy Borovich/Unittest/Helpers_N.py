@@ -7,6 +7,7 @@ import random
 import time
 import requests
 
+
 starlink_url = ('https://www.starlink.com//')
 
 home_page_logo = "//div[@class='starlink-logo-text']"
