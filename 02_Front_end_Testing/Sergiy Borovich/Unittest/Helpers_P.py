@@ -76,6 +76,11 @@ def click_residential_button(driver):
     residential_button = driver.find_element(By.XPATH, "//a[@href='/residential']")
     residential_button.click()
 
+def click_oder_now_button(driver):
+    residential_button = driver.find_element(By.XPATH, "(//span[@class='ng-star-inserted'])[1]")
+    residential_button.click()
+    print("To view available Starlink products in your area, please provide your address ")
+
 def check_oder_now_button(driver):
     wait = WebDriverWait(driver, 3)
     try:

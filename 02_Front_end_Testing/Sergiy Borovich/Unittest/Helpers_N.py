@@ -7,14 +7,13 @@ import random
 import time
 import requests
 
-
 starlink_url = ('https://www.starlink.com//')
 
 home_page_logo = "//div[@class='starlink-logo-text']"
 
 residential_url = ('https://www.starlink.com/residential')
 
-address = "3555 Las Vegas Blvd S, Las Vegas, NV 89109, USA"
+mix_everything = "151252fgedufhds$^&&*DGFH6165@!#[]{}"
 
 wrong_address_1 = "403 W High St, Milton, AR 53491"
 
@@ -24,19 +23,14 @@ wrong_address_2 = "1100 Congress Ave., Austin, TX 99669"
 
 random_numbers = "21892154961264"
 
-first_name = "Jack"
+email_symbols = "#$%^&^%{}[]""@)(!@)*"
 
-last_name = "Sparrow"
+email_mix = "1#%2&gjR,>[*-+5"
 
-name_on_card = "Peter Quill"
+email_numbers = "123456789"
 
-phone = "636-244-0721"
+email = "Cha-cha-cha@rumba.cub"
 
-email = "test@mail.com"
-
-credit_card = "60055441022277857"
-
-x_day = "1259"
 
 
 def assert_title(driver, title):
@@ -102,15 +96,6 @@ def check_contact_information_icon(driver):
     contact_information.is_displayed()
     print("'Contact Information' icon is visible")
 
-def check_checkout_logo(driver):
-    checkout_logo = driver.find_element(By.XPATH, "//h1[text() = 'Checkout']")
-    checkout_logo.is_displayed()
-    print("'Checkout' logo is visible")
-
-def check_payment_icon(driver):
-    payment_icon = driver.find_element(By.XPATH, "//h3[text() = 'Payment']")
-    payment_icon.is_displayed()
-    print("'Payment' icon is visible")
 
 def pup_message_icon(driver):
     message_icon = driver.find_element(By.XPATH, '''//h2[text() = " WE DON'T RECOGNIZE THAT ADDRESS. "]''')
@@ -126,15 +111,15 @@ def click_cancel_button(driver):
     cancel_button.click()
     print("Negative TC PASS")
 
-def pup_message_icon_2(driver):
-    message_icon_2 = driver.find_element(By.ID, "suggested-address-text")
-    message_icon_2.is_displayed()
-    print("Suggested Address 3555 Las Vegas Blvd S, Las Vegas, NV 89109, USA")
 
-def click_oder_now_button_3(driver):
-    oder_now_button_3 = driver.find_element(By.XPATH, "(//button[contains(.,'ORDER NOW')])[5]")
-    oder_now_button_3.click()
+def click_sing_up_button_2(driver):
+    sing_up_button = driver.find_element(By.XPATH, '//span[text()=" Sign Up "]')
+    sing_up_button.click()
+    print("'Please enter a valid email' message is visible")
+    print("Negative TC PASS")
 
-def click_address_icon(driver):
-    oder_address_icon = driver.find_element(By.XPATH, "(//span[@class='mat-radio-inner-circle'])[1]")
-    oder_address_icon.click()
+def click_sing_up_button_3(driver):
+    sing_up_button = driver.find_element(By.XPATH, '//span[text()=" Sign Up "]')
+    sing_up_button.click()
+    print("'You are now signed up for updates. Thank you for your interest in Starlink!' message is visible")
+    print("Negative TC FAIL")
