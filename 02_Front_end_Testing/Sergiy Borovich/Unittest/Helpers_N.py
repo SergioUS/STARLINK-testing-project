@@ -32,7 +32,6 @@ email_numbers = "123456789"
 email = "Cha-cha-cha@rumba.cub"
 
 
-
 def assert_title(driver, title):
     wait = WebDriverWait(driver, 3)
     wait.until(EC.title_is(title))

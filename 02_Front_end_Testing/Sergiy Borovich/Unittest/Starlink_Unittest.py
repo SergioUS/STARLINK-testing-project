@@ -25,7 +25,6 @@ from selenium.webdriver.chrome.options import Options
 
 
 
-
 def delay():
     time.sleep(random.randint(2, 5))
 

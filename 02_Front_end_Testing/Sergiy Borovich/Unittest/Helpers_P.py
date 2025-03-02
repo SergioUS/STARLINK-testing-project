@@ -32,6 +32,7 @@ wrong_address_1 = "403 W High St, Milton, AR 53491"
 
 wrong_address_2 = "!@#$%^&<>)(?"
 
+
 def assert_title(driver, title):
     wait = WebDriverWait(driver, 3)
     wait.until(EC.title_is(title))
