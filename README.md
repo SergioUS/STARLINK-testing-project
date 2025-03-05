@@ -10,6 +10,8 @@ Leveraging the power of **AI**, we enhance the effectiveness of our testing proc
 
 Join us on our journey as we work to uphold _the highest standards for this invaluable resources_.
 
+We are up for the challenge: **_[ResearchersBringOnTheBugs](https://www.starlink.com/public-files/StarlinkWelcomesSecurityResearchersBringOnTheBugs.pdf)_**
+
 
 <details open>
   <summary><h2>🛠 Our Skills</h2></summary>
@@ -66,7 +68,7 @@ _[Sergiy Borovich](http://www.linkedin.com/in/sergiy-borovich)_
 _[Altay Abzalov]()_
 
 <code><img width="1%" src="https://github.com/user-attachments/assets/d8634330-234a-4e0e-b163-b8859a1b66bf"></code>
-_[Lika Krasnova]()_
+_[Lika Krasnova](https://www.linkedin.com/in/lika-krasnova-83037b353/)_
 
 <code><img width="1%" src="https://github.com/user-attachments/assets/d8634330-234a-4e0e-b163-b8859a1b66bf"></code>
 _[Nadia Borovich](https://www.linkedin.com/in/nadiaborovich/)_
