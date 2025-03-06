@@ -49,7 +49,7 @@ def setup_driver(browser_name):
     return driver
 
 def wait_for_element(driver, locator, timeout=20):
-    """Wait for an element to be visible and return it."""
+    # Wait for an element to be visible and return it.
     try:
         element = WebDriverWait(driver, timeout).until(EC.visibility_of_element_located(locator))
         return element
