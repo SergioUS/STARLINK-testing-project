@@ -31,12 +31,13 @@ class Locators:
     PLACE_ORDER_BUTTON = (By.XPATH, "//button[contains(text(), 'Place Order')]")
 
     # Error Message
+    ORDER_NOW_BUTTON_ERROR = (By.XPATH, '''//div[contains(text(), "We're not able to process your request at this time. Please try again later.")]''')
     ERROR_MESSAGE_LOCATOR = (By.XPATH, "//span[@class='ng-star-inserted']")
     ERROR_MESSAGES_LOCATOR = (By.XPATH, "//div[contains(@class, 'error-message')]")
     EMAIL_ERROR_MESSAGE = (By.XPATH, "(//span[contains(@class, 'mui-1tmpjwc')])[1]")
     PASSWORD_ERROR_MESSAGE = (By.XPATH, "(//span[contains(@class, 'mui-1tmpjwc')])[2]")
     INVALID_EMAIL_ERROR = (By.XPATH, "//span[contains(text(), 'Invalid email address')]")
-
+    INVALID_ADDRESS_MSG = (By.XPATH, "//p[contains(text(), 'Provided address appears to be invalid.')]")
 
     # Modal Window
     MODAL_WINDOW_LOCATOR = (By.XPATH, "//div[contains(@class, 'modal-window')]")
@@ -52,5 +53,3 @@ class Locators:
     SIGN_IN_BUTTON = (By.XPATH, "//button[@data-testid='submit-button']")
     PASSWORD_FIELD = (By.ID, ':R5qfnkql57rbkq:')
     EMAIL_FIELD = (By.ID, ':R1afnkql57rbkq:')
-
-
