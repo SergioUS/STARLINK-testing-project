@@ -1,40 +1,14 @@
 import unittest
-import sys
-import builtins
 import HtmlTestRunner
 import allure
-from faker import Faker
 from selenium.common import TimeoutException
+from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+
+from base_test import BaseTest
 from helpers import delay, wait_for_element, get_page_url
 from locators import Locators
-from base_test import BaseTest
-
-# --- Refined monkey-patch for open() to force UTF-8 in text mode ---
-old_open = builtins.open
-
-
-def new_open(*args, **kwargs):
-    # Determine the mode: it may be passed as the second positional argument.
-    mode = kwargs.get("mode", None)
-    if mode is None and len(args) >= 2:
-        mode = args[1]
-    # If mode is not specified, assume text mode ("r")
-    if mode is None:
-        mode = "r"
-    # If not in binary mode, set encoding to UTF-8 (if not already set)
-    if "b" not in mode:
-        if "encoding" not in kwargs:
-            kwargs["encoding"] = "utf-8"
-    return old_open(*args, **kwargs)
-
-
-builtins.open = new_open
-# --- End monkey-patch ---
-
-# Reconfigure sys.stdout to use UTF-8 encoding
-sys.stdout.reconfigure(encoding='utf-8')
 
 
 @allure.feature("Starlink Positive Tests")
@@ -42,7 +16,7 @@ class TestStarlinkPositive(BaseTest):
 
     @allure.story("Navigate to Starlink and Verify Logo")
     def test1_navigate_to_starlink_and_verify_logo(self):
-        """Test Case 1: Verify the Starlink logo is visible on the homepage."""
+        # Test Case 1: Navigate to Starlink and verify the logo is visible.
         try:
             self.driver.get(get_page_url("starlink"))
             delay()
@@ -51,19 +25,22 @@ class TestStarlinkPositive(BaseTest):
         except Exception as e:
             self.fail(f"Test failed: {e}")
 
-    @allure.story("Hamburger Menu Navigation and Sign In")
+    @allure.story("Hamburger Menu and Sign In Navigation")
     def test2_hamburger_menu_and_sign_in_navigation(self):
-        """Test Case 2: Click the hamburger menu and navigate to the Sign In page."""
+        # Test Case 2: Open the hamburger menu, click "Sign In," and verify navigation to the login page.
         try:
             self.driver.get(get_page_url("starlink"))
             delay()
+
             # Click the hamburger menu
             hamburger_menu = wait_for_element(self.driver, Locators.HAMBURGER_MENU_LOCATOR)
             hamburger_menu.click()
+
             # Verify and click the "Sign In" option
             sign_in_option = wait_for_element(self.driver, Locators.SIGN_IN_OPTION_LOCATOR)
             self.assertTrue(sign_in_option.is_displayed(), "The 'Sign In' option is not visible.")
             sign_in_option.click()
+
             # Verify navigation to the login page
             self.wait.until(lambda driver: "auth/login" in driver.current_url)
             signin_page_logo = wait_for_element(self.driver, Locators.SIGN_IN_PAGE_LOCATOR)
@@ -73,202 +50,313 @@ class TestStarlinkPositive(BaseTest):
 
     @allure.story("Order Starlink and Verify ROAM Window")
     def test3_order_starlink_and_verify_roam_window(self):
-        """
-        Test Case 3: Navigate from the login page to order Starlink, then verify the ROAM window,
-        including checking for an error message inside an iframe if present.
-        """
+        # Test Case 3: Navigate to the Starlink homepage, order Starlink, and verify the ROAM window.
         try:
             self.driver.get(get_page_url("login"))
             delay()
+
+            # Verify and click the "Order Starlink" button
             order_starlink_button = wait_for_element(self.driver, Locators.ORDER_STARLINK_BUTTON_LOCATOR)
             self.assertTrue(order_starlink_button.is_displayed(), "The 'Order Starlink' button is not visible.")
             order_starlink_button.click()
+
+            # Verify navigation to the homepage
             self.wait.until(lambda driver: driver.current_url == get_page_url("starlink"))
+
+            # Verify and click the "Order Now" button in the ROAM window
             order_now_button = wait_for_element(self.driver, Locators.ORDER_NOW_BUTTON_LOCATOR)
             self.assertTrue(order_now_button.is_displayed(), "The 'Order Now' button is not visible.")
             order_now_button.click()
-            # Verify error message inside an iframe (if present)
+
+            # Verify the error message (if applicable)
             try:
+                # Step 1: Locate the iframe and switch to it
                 iframe = self.wait.until(EC.presence_of_element_located((By.XPATH, "//iframe")))
                 self.driver.switch_to.frame(iframe)
+
+                # Step 2: Locate the error message inside the iframe
                 error_message = self.wait.until(EC.visibility_of_element_located(Locators.ERROR_MESSAGE_LOCATOR))
                 self.assertTrue(error_message.is_displayed(), "The error message is not visible.")
                 print("Verified error message is visible.")
+
+                # Step 3: Switch back to the default content
                 self.driver.switch_to.default_content()
+
             except TimeoutException:
-                print("Error message not found. Continuing without verification.")
-                self.driver.switch_to.default_content()
+                # If the iframe or error message is not found, handle the exception
+                print("Error message not found. Continuing without verifying the error message.")
+                self.driver.switch_to.default_content()  # Ensure we switch back to default content even if an exception occurs
         except Exception as e:
             self.fail(f"Test failed: {e}")
 
-    @allure.story("Order ROAM and Verify Checkout Process")
+    @allure.story("Order ROAM and Verify Checkout")
     def test4_order_roam_and_verify_checkout(self):
-        """
-        Test Case 4: Verify the checkout process for ordering ROAM,
-        including country field verification, scrolling to product details,
-        clicking the checkout button, and ensuring navigation to the checkout page.
-        """
+        # Test Case 4: Order ROAM and verify the checkout process.
         try:
             self.driver.get(get_page_url("order_step_0"))
             delay()
+
+            # Verify country field
             country_field = wait_for_element(self.driver, Locators.COUNTRY_LABEL_FIELD)
             self.assertTrue(country_field.is_displayed(), "The 'United States' field is not visible.")
+
+            # Scroll down to product details
             product_details_button = wait_for_element(self.driver, Locators.PRODUCT_DETAILS_BUTTON)
             self.driver.execute_script("arguments[0].scrollIntoView();", product_details_button)
+
+            # Verify and click the "Checkout" button
             checkout_button = wait_for_element(self.driver, Locators.CHECKOUT_BUTTON_LOCATOR)
             self.assertTrue(checkout_button.is_displayed(), "The 'Checkout' button is not visible.")
             checkout_button.click()
+
+            # Verify navigation to the checkout page
             self.wait.until(lambda driver: "step=2" in driver.current_url)
             checkout_element = wait_for_element(self.driver, Locators.CHECKOUT_ELEMENT)
             self.assertTrue(checkout_element.is_displayed(), "The 'CHECKOUT' element is not visible.")
         except Exception as e:
             self.fail(f"Test failed: {e}")
 
-    @allure.story("Checkout Page: Place Order")
+    @allure.story("Checkout Page and Place Order")
     def test5_checkout_page_and_place_order(self):
-        """
-        Test Case 5: Fill in shipping details on the checkout page using Faker,
-        verify the Shipping Address window, check that the country field is pre-filled,
-        and update the shipping address.
-        """
         try:
+            # Step 1: Navigate to the "Checkout" page
             self.driver.get(get_page_url("order_step_2"))
             print("Navigated to Checkout page. Current URL:", self.driver.current_url)
+
+            # Verify navigation to the checkout page
+            self.wait.until(lambda driver: "step=2" in driver.current_url)
+            checkout_element = wait_for_element(self.driver, Locators.CHECKOUT_ELEMENT)
+            self.assertTrue(checkout_element.is_displayed(), "The 'CHECKOUT' element is not visible.")
+
+            # Step 2: Verify that the checkout page loads successfully
             shipping_address_window = self.wait.until(
                 EC.visibility_of_element_located(Locators.SHIPPING_ADDRESS_WINDOW))
             self.assertTrue(shipping_address_window.is_displayed(), "The Shipping Address window is not visible.")
             print("Verified Shipping Address window is visible.")
+
+            # Step 3: Fill in the Shipping Address fields with fake credentials using Faker
             zip_postal_code_field = self.wait.until(EC.element_to_be_clickable(Locators.ZIP_POSTAL_CODE_FIELD))
             fake_zip_code = self.fake.zipcode()
             zip_postal_code_field.send_keys(fake_zip_code)
             print(f"Filled in Zip / Postal Code field with fake value: {fake_zip_code}.")
+
             shipping_address_line_1_field = self.wait.until(
                 EC.element_to_be_clickable(Locators.SHIPPING_ADDRESS_LINE_1_FIELD))
             fake_street_address = self.fake.street_address()
             shipping_address_line_1_field.send_keys(fake_street_address)
             print(f"Filled in Shipping Address Line 1 field with fake value: {fake_street_address}.")
+
             city_field = self.wait.until(EC.element_to_be_clickable(Locators.CITY_FIELD))
             fake_city = self.fake.city()
             city_field.send_keys(fake_city)
             print(f"Filled in City field with fake value: {fake_city}.")
+
             state_province_field = self.wait.until(EC.element_to_be_clickable(Locators.STATE_PROVINCE_FIELD))
             fake_state = self.fake.state()
             state_province_field.send_keys(fake_state)
             print(f"Filled in State / Province field with fake value: {fake_state}.")
+
+            # Step 4: Verify the Country field is pre-filled with "United States"
             country_field = self.wait.until(EC.visibility_of_element_located(Locators.COUNTRY_FIELD))
             self.assertTrue(country_field.is_displayed(), "The 'Country' field is not visible.")
             pre_filled_value = country_field.get_attribute("value")
             self.assertEqual(pre_filled_value, "United States",
                              "The 'Country' field is not pre-filled with 'United States'.")
             print(f"Verified 'Country' field is pre-filled with '{pre_filled_value}'.")
+
+            # Step 5: Click "Update Shipping Address" button
             update_shipping_address_button = self.wait.until(
-                EC.element_to_be_clickable(Locators.UPDATE_SHIPPING_ADDRESS_BUTTON))
-            self.assertTrue(update_shipping_address_button.is_displayed(),
-                            "The 'Update Shipping Address' button is not visible.")
+                EC.element_to_be_clickable(Locators.UPDATE_SHIPPING_ADDRESS_BUTTON)
+            )
             update_shipping_address_button.click()
             print("Clicked 'Update Shipping Address' button.")
+
+            # Optional: Wait briefly for the popup to appear
             delay()
+
+            # Step 5.1: Send an ESC key to dismiss any “Save address?” prompt or other overlays
+            actions = ActionChains(self.driver)
+            actions.send_keys(Keys.ESCAPE).perform()
+            actions.send_keys(Keys.ENTER).perform()
+            print("Sent ESC key to dismiss any browser-level save-address prompts.")
+
+            # Step 5.2: Check if an invalid address message is shown
+            try:
+                invalid_address_msg = self.wait.until(
+                    EC.visibility_of_element_located(Locators.INVALID_ADDRESS_MSG)
+                )
+                self.assertTrue(
+                    invalid_address_msg.is_displayed(),
+                    "The 'Provided address appears to be invalid.' message is not visible."
+                )
+                print("Invalid address message displayed as expected.")
+            except TimeoutException:
+                print("No invalid address message found. Continuing without it.")
+            delay()
+            # Step 6: Verify the "Place Order" button is visible and enabled
+            # place_order_button = self.wait.until(
+            #     EC.element_to_be_clickable(Locators.PLACE_ORDER_BUTTON)
+            # )
+            # self.assertTrue(place_order_button.is_displayed(), "The 'Place Order' button is not visible.")
+            # # self.assertTrue(place_order_button.is_enabled(), "The 'Place Order' button is not enabled.")
+            # print("Verified 'Place Order' button is visible and enabled.")
+
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            self.fail(f"Test failed: {e}")
+        finally:
+            self.driver.quit()
+
+
+@allure.feature("Starlink Negative Tests")
+class TestStarlinkNegative(BaseTest):
+
+    @allure.story("Reject Invalid Login Credentials")
+    def test6_reject_invalid_login_credentials(self):
+        # Ensure that the system rejects invalid login credentials.
+        try:
+            # Step 1: Navigate to the "Sign In" page
+            self.driver.get(get_page_url("login"))
+
+            # Step 2: Enter an invalid email and password
+            invalid_email = "invalid@example.com"
+            invalid_password = "wrongpassword"
+            self.helpers.send_keys_to_element(Locators.EMAIL_FIELD, invalid_email)
+            self.helpers.send_keys_to_element(Locators.PASSWORD_FIELD, invalid_password)
+
+            # Step 3: Click the "Sign In" button
+            self.helpers.click_element(Locators.SIGN_IN_BUTTON)
+
+            # Step 4: Verify the error message displayed
+            error_message = self.helpers.wait_for_element_visibility(Locators.INVALID_CREDENTIALS_ERROR)
+            self.assertTrue(error_message.is_displayed(), "Error message for invalid credentials is not visible.")
+
+            print("The error message 'Invalid email or password' was displayed.")
+
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            self.fail(f"Test failed: {e}")
+
+    @allure.story("Reject Blank Fields")
+    def test7_reject_blank_fields(self):
+        # Ensure that the system does not allow blank fields during sign-in.
+        try:
+            # Step 1: Navigate to the "Sign In" page
+            self.driver.get(get_page_url("login"))
+
+            # Step 2: Leave both email and password fields empty
+
+            # Step 3: Click outside to trigger validation
+            self.helpers.wait_for_element_visibility(Locators.SIGN_IN_PAGE_LOCATOR)
+
+            # Step 4: Click the "Sign In" button
+            self.helpers.click_element(Locators.SIGN_IN_BUTTON)
+
+            # Step 5: Wait for error messages to appear
+            email_error_message = self.helpers.wait_for_element_visibility(Locators.EMAIL_ERROR_MESSAGE, timeout=15)
+            password_error_message = self.helpers.wait_for_element_visibility(Locators.PASSWORD_ERROR_MESSAGE, timeout=15)
+
+            # Assertions
+            self.assertTrue(email_error_message.is_displayed(), "Email error message not visible.")
+            self.assertTrue(password_error_message.is_displayed(), "Password error message not visible.")
+
+            print("✅ Error messages 'Email is required' and 'Password is required' were displayed.")
+
+        except Exception as e:
+            print(f"❌ Exception occurred: {e}")
+            self.fail(f"Test failed: {e}")
+
+    @allure.story("Reject Invalid Email Format")
+    def test8_reject_invalid_email_format(self):
+        # Ensure that the system rejects invalid email formats during sign-in.
+        try:
+            # Step 1: Navigate to the "Sign In" page
+            self.driver.get(get_page_url("login"))
+
+            # Step 2: Enter an invalid email format and a valid password
+            invalid_email = "invalid-email-format"
+            valid_password = "ValidPassword123!"
+            self.helpers.send_keys_to_element(Locators.EMAIL_FIELD, invalid_email)
+            self.helpers.send_keys_to_element(Locators.PASSWORD_FIELD, valid_password)
+
+            # Step 3: Click the "Sign In" button
+            self.helpers.click_element(Locators.SIGN_IN_BUTTON)
+
+            # Step 4: Verify the error message for invalid email format
+            error_message = self.helpers.wait_for_element_visibility(Locators.INVALID_EMAIL_ERROR)
+            self.assertTrue(error_message.is_displayed(), "Error message for invalid email format is not visible.")
+
+            print("The error message 'Invalid email format' was displayed.")
+
+        except Exception as e:
+            print(f"Exception occurred: {e}")
+            self.fail(f"Test failed: {e}")
+
+    @allure.story("Check Failed Login Behavior")
+    def test9_check_failed_login_behavior(self):
+        # Ensure that the system handles multiple failed login attempts correctly.
+        try:
+            self.driver.get(get_page_url("login"))
+            invalid_email = "invalid@example.com"
+            invalid_password = "wrongpassword"
+
+            for attempt in range(10):
+                print(f"Attempt {attempt + 1}...")
+
+                # Use JavaScript to clear and input values
+                self.helpers.js_send_keys(Locators.EMAIL_FIELD, invalid_email)
+                self.helpers.js_send_keys(Locators.PASSWORD_FIELD, invalid_password)
+
+                self.helpers.click_element(Locators.SIGN_IN_BUTTON)
+                error_message = self.helpers.wait_for_element_visibility(Locators.INVALID_CREDENTIALS_ERROR)
+                self.assertTrue(error_message.is_displayed(), "Error message did not appear.")
+
+                # Clear fields using JavaScript after error appears
+                self.helpers.js_clear_field(Locators.EMAIL_FIELD)
+                self.helpers.js_clear_field(Locators.PASSWORD_FIELD)
+
+            print("Completed 10 failed login attempts.")
+
+        except Exception as e:
+            self.fail(f"Test failed: {e}")
+
+    @allure.story("Password Field Masked Verification")
+    def test10_password_field_masked(self):
+        # Ensure that the password field is masked during sign-in.
+        try:
+            # Step 1: Navigate to the "Sign In" page
+            self.driver.get(get_page_url("login"))
+
+            # Step 2: Enter a password in the password field
+            test_password = "SecurePass123!"
+
+            # Use an existing helper method to retrieve the element
+            password_element = self.helpers.wait_for_element_visibility(Locators.PASSWORD_FIELD)
+            password_element.send_keys(test_password)
+
+            # Step 3: Verify that the password field is masked
+            field_type = password_element.get_attribute("type")
+            self.assertEqual(field_type, "password", "Password field is not masked.")
+
+            print("The password field displayed masked characters as expected.")
+
         except Exception as e:
             print(f"Exception occurred: {e}")
             self.fail(f"Test failed: {e}")
 
 
-@allure.feature("Starlink Negative Tests")
-class TestStarlinkNegative(BaseTest):
-    @allure.story("Reject Invalid Login Credentials")
-    def test6_reject_invalid_login_credentials(self):
-        """Test Case 6: Verify that invalid login credentials are rejected."""
-        try:
-            self.driver.get(get_page_url("login"))
-            invalid_email = "invalid@example.com"
-            invalid_password = "wrongpassword"
-            self.helpers.send_keys_to_element(Locators.EMAIL_FIELD, invalid_email)
-            self.helpers.send_keys_to_element(Locators.PASSWORD_FIELD, invalid_password)
-            self.helpers.click_element(Locators.SIGN_IN_BUTTON)
-            error_message = self.helpers.wait_for_element_visibility(Locators.INVALID_CREDENTIALS_ERROR)
-            self.assertTrue(error_message.is_displayed(), "Error message for invalid credentials is not visible.")
-            print("The error message 'Invalid email or password' was displayed.")
-        except Exception as e:
-            self.fail(f"Test failed: {e}")
-
-    @allure.story("Reject Blank Fields")
-    def test7_reject_blank_fields(self):
-        """Test Case 7: Verify that blank fields are not allowed during sign-in."""
-        try:
-            self.driver.get(get_page_url("login"))
-            self.helpers.click_element(Locators.LOGIN_PAGE_TITLE)  # Click outside to trigger validation
-            self.helpers.click_element(Locators.SIGN_IN_BUTTON)
-            email_error_message = self.helpers.wait_for_element_visibility(Locators.EMAIL_ERROR_MESSAGE, timeout=15)
-            password_error_message = self.helpers.wait_for_element_visibility(Locators.PASSWORD_ERROR_MESSAGE,
-                                                                              timeout=15)
-            self.assertTrue(email_error_message.is_displayed(), "Email error message not visible.")
-            self.assertTrue(password_error_message.is_displayed(), "Password error message not visible.")
-            print("✅ Error messages 'Email is required' and 'Password is required' were displayed.")
-        except Exception as e:
-            self.fail(f"Test failed: {e}")
-
-    @allure.story("Reject Invalid Email Format")
-    def test8_reject_invalid_email_format(self):
-        """Test Case 8: Verify that invalid email formats are rejected."""
-        try:
-            self.driver.get(get_page_url("login"))
-            invalid_email = "invalid-email-format"
-            valid_password = "ValidPassword123!"
-            self.helpers.send_keys_to_element(Locators.EMAIL_FIELD, invalid_email)
-            self.helpers.send_keys_to_element(Locators.PASSWORD_FIELD, valid_password)
-            self.helpers.click_element(Locators.SIGN_IN_BUTTON)
-            error_message = self.helpers.wait_for_element_visibility(Locators.INVALID_EMAIL_ERROR)
-            self.assertTrue(error_message.is_displayed(), "Error message for invalid email format is not visible.")
-            print("The error message 'Invalid email format' was displayed.")
-        except Exception as e:
-            self.fail(f"Test failed: {e}")
-
-    @allure.story("Handle Multiple Failed Login Attempts")
-    def test9_check_failed_login_behavior(self):
-        """Test Case 9: Verify that multiple failed login attempts are handled properly."""
-        try:
-            self.driver.get(get_page_url("login"))
-            invalid_email = "invalid@example.com"
-            invalid_password = "wrongpassword"
-            for attempt in range(10):
-                print(f"Attempt {attempt + 1}...")
-                self.helpers.js_send_keys(Locators.EMAIL_FIELD, invalid_email)
-                self.helpers.js_send_keys(Locators.PASSWORD_FIELD, invalid_password)
-                self.helpers.click_element(Locators.SIGN_IN_BUTTON)
-                error_message = self.helpers.wait_for_element_visibility(Locators.INVALID_CREDENTIALS_ERROR)
-                self.assertTrue(error_message.is_displayed(), "Error message did not appear.")
-                self.helpers.js_clear_field(Locators.EMAIL_FIELD)
-                self.helpers.js_clear_field(Locators.PASSWORD_FIELD)
-            print("Completed 10 failed login attempts.")
-        except Exception as e:
-            self.fail(f"Test failed: {e}")
-
-    @allure.story("Password Field Masking")
-    def test10_password_field_masked(self):
-        """Test Case 10: Verify that the password field masks the input."""
-        try:
-            self.driver.get(get_page_url("login"))
-            test_password = "SecurePass123!"
-            password_element = self.helpers.wait_for_element_visibility(Locators.PASSWORD_FIELD)
-            password_element.send_keys(test_password)
-            field_type = password_element.get_attribute("type")
-            self.assertEqual(field_type, "password", "Password field is not masked.")
-            print("The password field displayed masked characters as expected.")
-        except Exception as e:
-            self.fail(f"Test failed: {e}")
-
-
 if __name__ == "__main__":
-    # Combine test suites from both positive and negative test cases.
-    suite_positive = unittest.TestLoader().loadTestsFromTestCase(TestStarlinkPositive)
-    suite_negative = unittest.TestLoader().loadTestsFromTestCase(TestStarlinkNegative)
+    # Create a test suite for each class
+    suite_positive = unittest.defaultTestLoader.loadTestsFromTestCase(TestStarlinkPositive)
+    suite_negative = unittest.defaultTestLoader.loadTestsFromTestCase(TestStarlinkNegative)
+
+    # Combine them
     combined_suite = unittest.TestSuite([suite_positive, suite_negative])
 
-    # Run tests and generate HTML report.
     runner = HtmlTestRunner.HTMLTestRunner(
-        output='HTMLReports',
-        report_name='StarlinkTests',
-        combine_reports=True,
+        output='HTMLReports',        # folder to store the reports
+        report_name='StarlinkTests', # base name for the .html file
+        combine_reports=True,        # one consolidated report
         verbosity=2
     )
     runner.run(combined_suite)
