@@ -2,8 +2,6 @@ from selenium.webdriver.common.by import By
 
 class Locators:
     # Homepage
-    #ACCOUNT_LOCKED_ERROR = None
-    #WARNING_MESSAGE = None
     LOGIN_PAGE_TITLE = (By.XPATH, "//h1[@class='MuiTypography-root MuiTypography-h1 mui-i4qams']")
     LOGO_LOCATOR = (By.XPATH, "//div[contains(@class, 'starlink-logo-text')]")
     HAMBURGER_MENU_LOCATOR = (By.XPATH, "//img[@alt='Open Menu']")
@@ -19,19 +17,18 @@ class Locators:
     # Checkout Page
     COUNTRY_LABEL_FIELD = (By.XPATH, "//div[contains(text(), 'United States')]")
     PRODUCT_DETAILS_BUTTON = (By.XPATH, "(//button[@type='button'])[7]")
-    CHECKOUT_BUTTON_LOCATOR = (By.XPATH, "(//span[@class='MuiTypography-root MuiTypography-button MuiTypography-noWrap mui-11i8kmk'])[3]")
-    CHECKOUT_ELEMENT = (By.XPATH, "//div[@class='MuiBox-root mui-1gzcyk']")
-    SHIPPING_ADDRESS_WINDOW = (By.XPATH, "//div[@class='MuiStack-root mui-6wlff5']")
-    ZIP_POSTAL_CODE_FIELD = (By.ID, ":rs:")
+    CHECKOUT_BUTTON_LOCATOR = (By.XPATH, "(//span[contains(text(), 'Checkout')])[2]")
+    CHECKOUT_ELEMENT = (By.XPATH, "//h1[contains(text(), 'Checkout')]")
+    SHIPPING_ADDRESS_WINDOW = (By.XPATH, "//h3[contains(text(), 'Shipping Address')]")
+    ZIP_POSTAL_CODE_FIELD = (By.XPATH, "//div[label[contains(text(), 'Zip / Postal Code')]]//input[@type='text']")
     SHIPPING_ADDRESS_LINE_1_FIELD = (By.NAME, "addressLine1")
-    CITY_FIELD = (By.ID, ":rb:")
-    STATE_PROVINCE_FIELD = (By.ID, ":rg:")
-    COUNTRY_FIELD = (By.ID, ":ri:")
+    CITY_FIELD = (By.XPATH, "//div[label[contains(text(), 'City')]]//input[@type='text']")
+    STATE_PROVINCE_FIELD = (By.XPATH, "//div[label[contains(text(), 'State / Province')]]//input[@type='text']")
+    COUNTRY_FIELD = (By.NAME, "country")
     UPDATE_SHIPPING_ADDRESS_BUTTON = (By.XPATH, "//span[contains(text(), 'Update Shipping Address')]")
     PLACE_ORDER_BUTTON = (By.XPATH, "//button[contains(text(), 'Place Order')]")
 
-    # Error Message
-    ORDER_NOW_BUTTON_ERROR = (By.XPATH, '''//div[contains(text(), "We're not able to process your request at this time. Please try again later.")]''')
+    # Error Messages and Negative Tests
     ERROR_MESSAGE_LOCATOR = (By.XPATH, "//span[@class='ng-star-inserted']")
     ERROR_MESSAGES_LOCATOR = (By.XPATH, "//div[contains(@class, 'error-message')]")
     EMAIL_ERROR_MESSAGE = (By.XPATH, "(//span[contains(@class, 'mui-1tmpjwc')])[1]")
@@ -39,13 +36,9 @@ class Locators:
     INVALID_EMAIL_ERROR = (By.XPATH, "//span[contains(text(), 'Invalid email address')]")
     INVALID_ADDRESS_MSG = (By.XPATH, "//p[contains(text(), 'Provided address appears to be invalid.')]")
 
-    # Modal Window
+    # Modal and Miscellaneous Elements
     MODAL_WINDOW_LOCATOR = (By.XPATH, "//div[contains(@class, 'modal-window')]")
-
-    # Checkout Page Elements
     CHECKOUT_PAGE_TITLE = (By.XPATH, "//h1[contains(text(), 'Checkout')]")
-
-    # Close Button
     CLOSE_BUTTON = (By.XPATH, "//button[text()='No thanks']")
 
     # Negative Test Login Page
