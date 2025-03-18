@@ -27,10 +27,10 @@ class Locators:
     COUNTRY_FIELD = (By.NAME, "country")
     UPDATE_SHIPPING_ADDRESS_BUTTON = (By.XPATH, "//span[contains(text(), 'Update Shipping Address')]")
     PLACE_ORDER_BUTTON = (By.XPATH, "//button[contains(text(), 'Place Order')]")
-
     # Error Messages and Negative Tests
-    ERROR_MESSAGE_LOCATOR = (By.XPATH, "//span[@class='ng-star-inserted']")
+    # ERROR_MESSAGE_LOCATOR = (By.XPATH, "//span[@class='ng-star-inserted']")
     ERROR_MESSAGES_LOCATOR = (By.XPATH, "//div[contains(@class, 'error-message')]")
+    ERROR_MESSAGES_ORDER_NOW = (By.XPATH, "//div[contains(text(), concat('We', \"'\", 're not able to process your request at this time. Please try again later.'))]")
     EMAIL_ERROR_MESSAGE = (By.XPATH, "(//span[contains(@class, 'mui-1tmpjwc')])[1]")
     PASSWORD_ERROR_MESSAGE = (By.XPATH, "(//span[contains(@class, 'mui-1tmpjwc')])[2]")
     INVALID_EMAIL_ERROR = (By.XPATH, "//span[contains(text(), 'Invalid email address')]")
@@ -43,6 +43,7 @@ class Locators:
 
     # Negative Test Login Page
     INVALID_CREDENTIALS_ERROR = (By.XPATH, "//div[@data-sentry-element='Alert']")
+
     SIGN_IN_BUTTON = (By.XPATH, "//button[@data-testid='submit-button']")
     PASSWORD_FIELD = (By.ID, ':R5qfnkql57rbkq:')
     EMAIL_FIELD = (By.ID, ':R1afnkql57rbkq:')

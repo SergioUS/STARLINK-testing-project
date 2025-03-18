@@ -7,6 +7,8 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.wait import WebDriverWait
 from faker import Faker
+
+from browserStack import download_artifact
 from helpers import Helpers
 from my_keys import BROWSERSTACK_USERNAME, BROWSERSTACK_ACCESS_KEY
 
@@ -17,7 +19,7 @@ class BaseTest(unittest.TestCase):
       - Disabling Chrome's autofill/save prompts
       - Faker instance creation
       - Helpers instance creation
-      - WebDriver teardown
+      - WebDriver teardown and attaching BrowserStack session URL to Allure report
     """
 
     def setUp(self):
@@ -25,8 +27,6 @@ class BaseTest(unittest.TestCase):
             # Configure Chrome options
             options = Options()
             options.page_load_strategy = 'eager'
-
-            # Disable Chrome's save prompts for passwords/autofill
             prefs = {
                 "credentials_enable_service": False,
                 "profile.password_manager_enabled": False,
@@ -34,7 +34,7 @@ class BaseTest(unittest.TestCase):
             }
             options.add_experimental_option("prefs", prefs)
 
-            # Check if we need to run on BrowserStack
+            # Check if running on BrowserStack
             if os.getenv("BROWSERSTACK"):
                 # Set BrowserStack capabilities using bstack:options
                 options.set_capability("browserName", "Chrome")
@@ -44,7 +44,6 @@ class BaseTest(unittest.TestCase):
                     "osVersion": "10",
                     "buildName": "Build 1",
                     "sessionName": "Starlink Test",
-                    # Use environment variables if set, otherwise fallback to my_keys.py values
                     "userName": os.getenv("BROWSERSTACK_USER", BROWSERSTACK_USERNAME),
                     "accessKey": os.getenv("BROWSERSTACK_KEY", BROWSERSTACK_ACCESS_KEY)
                 })
@@ -53,7 +52,7 @@ class BaseTest(unittest.TestCase):
                     options=options
                 )
             else:
-                # Otherwise, run tests locally using Chrome
+                # Run tests locally using Chrome
                 self.driver = webdriver.Chrome(
                     service=ChromeService(ChromeDriverManager().install()),
                     options=options
@@ -65,10 +64,31 @@ class BaseTest(unittest.TestCase):
             self.fake = Faker()
             self.helpers = Helpers(self.driver)
 
+    # def tearDown(self):
+    #     with allure.step("Tearing down the WebDriver and closing the browser"):
+    #         try:
+    #             self.driver.quit()
+    #         except Exception as e:
+    #             print(f"Ignoring tearDown exception: {e}")
+
     def tearDown(self):
+        if os.getenv("BROWSERSTACK"):
+            with allure.step("Attaching and downloading BrowserStack Session Report"):
+                try:
+                    session_id = self.driver.session_id
+                    bs_report_url = f"https://automate.browserstack.com/sessions/{session_id}.json"
+                    allure.attach(bs_report_url, name="BrowserStack Session Report",
+                                  attachment_type=allure.attachment_type.TEXT)
+
+                    # Download the video artifact and attach it to Allure report (if available)
+                    video_path = download_artifact(session_id, artifact_type="video", save_dir="./BrowserStackReports")
+                    if video_path:
+                        allure.attach.file(video_path, name="BrowserStack Video",
+                                           attachment_type=allure.attachment_type.MP4)
+                except Exception as e:
+                    print(f"Failed to attach/download BrowserStack URL: {e}")
         with allure.step("Tearing down the WebDriver and closing the browser"):
             try:
                 self.driver.quit()
             except Exception as e:
-                print(f"Error during teardown: {e}")
-
+                print(f"Ignoring tearDown exception: {e}")
