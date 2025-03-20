@@ -1,7 +1,6 @@
 # test_starlink.py
 import unittest
 from asyncio import timeout
-
 import HtmlTestRunner
 import allure
 from selenium.common import TimeoutException

@@ -7,7 +7,6 @@ from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.wait import WebDriverWait
 from faker import Faker
-
 from browserStack import download_artifact
 from helpers import Helpers
 from my_keys import BROWSERSTACK_USERNAME, BROWSERSTACK_ACCESS_KEY
