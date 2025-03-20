@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException as WDE
 
+
 @allure.step("Delay execution for a random period between 2 and 6 seconds")
 def delay():
     """Generate a random delay between 2 and 6 seconds."""

@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 
+
 class Locators:
     # Homepage
     LOGIN_PAGE_TITLE = (By.XPATH, "//h1[@class='MuiTypography-root MuiTypography-h1 mui-i4qams']")
