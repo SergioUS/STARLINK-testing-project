@@ -1,0 +1,533 @@
+{
+	"info": {
+		"_postman_id": "dfa0c997-3c91-42f0-8ac0-8448eef5fd5f",
+		"name": "Starlink_query_v1.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20045004"
+	},
+	"item": [
+		{
+			"name": "Positive_Test",
+			"item": [
+				{
+					"name": "Starlink Query - Version v1.0",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// ----- Status Test -----\r",
+									"pm.test(\"Status code is 200\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Time Test -----\r",
+									"// Expect the response time to be less than 1000ms.\r",
+									"pm.test(\"Response time is less than 1000ms\", function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Size Test -----\r",
+									"// Expect the response size to be less than 500KB.\r",
+									"pm.test(\"Response size is less than 500KB\", function() {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(500 * 1024);\r",
+									"});\r",
+									"\r",
+									"// ----- Header Tests -----\r",
+									"// Check that the \"Content-Type\" header is present and indicates JSON.\r",
+									"pm.test(\"Content-Type header is application/json\", function() {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"// ----- Response Body Tests -----\r",
+									"// Parse the response as JSON.\r",
+									"let responseData;\r",
+									"try {\r",
+									"    responseData = pm.response.json();\r",
+									"} catch (e) {\r",
+									"    console.error(\"Response is not valid JSON:\", pm.response.text());\r",
+									"    pm.test(\"Response should be valid JSON\", function() {\r",
+									"        throw new Error(\"Response is not valid JSON\");\r",
+									"    });\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"// Verify that the response contains a \"docs\" array.\r",
+									"pm.test(\"Response contains a docs array\", function() {\r",
+									"    pm.expect(responseData.docs).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Verify that every document has version \"v1.0\".\r",
+									"pm.test(\"All documents have version v1.0\", function() {\r",
+									"    responseData.docs.forEach(doc => {\r",
+									"        pm.expect(doc.version).to.equal(\"v1.0\");\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"query\": { \"version\": \"v1.0\" },\r\n  \"options\": {}\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL_without_starlink}}starlink/query",
+							"host": [
+								"{{URL_without_starlink}}starlink"
+							],
+							"path": [
+								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Starlink Query - Filter by OBJECT_NAME",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// ----- Status Test -----\r",
+									"pm.test(\"Status code is 200\", function() {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Time Test -----\r",
+									"pm.test(\"Response time is less than 1000ms\", function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Size Test -----\r",
+									"pm.test(\"Response size is less than 500KB\", function() {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(500 * 1024);\r",
+									"});\r",
+									"\r",
+									"// ----- Header Tests -----\r",
+									"pm.test(\"Content-Type header is application/json\", function() {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"// ----- Response Body Tests -----\r",
+									"// Safely parse the JSON response.\r",
+									"let responseData;\r",
+									"try {\r",
+									"    responseData = pm.response.json();\r",
+									"} catch(e) {\r",
+									"    console.error(\"Response is not valid JSON:\", pm.response.text());\r",
+									"    pm.test(\"Response should be valid JSON\", function() {\r",
+									"        throw new Error(\"Response is not valid JSON\");\r",
+									"    });\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"// Test that the response contains a docs array.\r",
+									"pm.test(\"Response contains a docs array\", function() {\r",
+									"    pm.expect(responseData.docs).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Test that the docs array contains exactly one document.\r",
+									"pm.test(\"Response contains exactly one document\", function() {\r",
+									"    pm.expect(responseData.docs.length).to.equal(1);\r",
+									"});\r",
+									"\r",
+									"// Retrieve expected values from environment.\r",
+									"const expectedId = pm.environment.get(\"selected_id\");\r",
+									"const expectedVersion = pm.environment.get(\"version\");\r",
+									"\r",
+									"// Verify that the returned document has the expected id and version.\r",
+									"const doc = responseData.docs[0];\r",
+									"pm.test(\"Document has correct id\", function() {\r",
+									"    pm.expect(doc.id).to.equal(expectedId);\r",
+									"});\r",
+									"pm.test(\"Document has correct version\", function() {\r",
+									"    pm.expect(doc.version).to.equal(expectedVersion);\r",
+									"});\r",
+									"\r",
+									"// Optional: Compare OBJECT_NAME with expected value from starlink_1010.\r",
+									"let expectedStarlink;\r",
+									"try {\r",
+									"    expectedStarlink = JSON.parse(pm.environment.get(\"starlink_1010\"));\r",
+									"} catch(e) {\r",
+									"    console.error(\"Error parsing starlink_1010:\", e);\r",
+									"}\r",
+									"if (expectedStarlink && expectedStarlink.spaceTrack) {\r",
+									"    pm.test(\"Document OBJECT_NAME is correct\", function() {\r",
+									"        pm.expect(doc.spaceTrack.OBJECT_NAME).to.equal(expectedStarlink.spaceTrack.OBJECT_NAME);\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"query\": {\r\n    \"version\": \"v1.0\",\r\n    \"spaceTrack.OBJECT_NAME\": \"STARLINK-1010\"\r\n  },\r\n  \"options\": {}\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL_without_starlink}}starlink/query",
+							"host": [
+								"{{URL_without_starlink}}starlink"
+							],
+							"path": [
+								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Starlink 1010 - Valid ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Retrieve and parse the ID list from the environment variable \"v1_ids\"\r",
+									"let v1Ids = JSON.parse(pm.environment.get(\"v1_ids\") || \"[]\");\r",
+									"\r",
+									"// Ensure that the ID at index 1 (for Starlink 1010) exists.\r",
+									"if (v1Ids.length > 1) {\r",
+									"    pm.environment.set(\"selected_id\", v1Ids[1]);\r",
+									"    console.log(\"Automatically set selected_id to:\", v1Ids[1]);\r",
+									"} else {\r",
+									"    console.error(\"Not enough IDs found in 'v1_ids'.\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// ----- Status Test -----\r",
+									"pm.test(\"Status code is 200\", () => {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Time Test -----\r",
+									"pm.test(\"Response time is less than 1000ms\", function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Size Test -----\r",
+									"pm.test(\"Response size is less than 500KB\", function() {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(500 * 1024);\r",
+									"});\r",
+									"\r",
+									"// ----- Header Tests -----\r",
+									"pm.test(\"Content-Type header is application/json\", function() {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"// ----- Response Body Tests -----\r",
+									"// Safely parse the response.\r",
+									"let responseData;\r",
+									"try {\r",
+									"    responseData = pm.response.json();\r",
+									"} catch (e) {\r",
+									"    console.error(\"Response is not valid JSON:\", pm.response.text());\r",
+									"    pm.test(\"Response should be valid JSON\", function() {\r",
+									"        throw new Error(\"Response is not valid JSON\");\r",
+									"    });\r",
+									"    return;\r",
+									"}\r",
+									"\r",
+									"// Verify that the returned satellite ID matches selected_id.\r",
+									"const expectedId = pm.environment.get(\"selected_id\");\r",
+									"pm.test(\"Returned satellite ID is correct\", () => {\r",
+									"    pm.expect(responseData.id).to.equal(expectedId);\r",
+									"});\r",
+									"console.log(\"Response ID:\", responseData.id, \"Expected ID:\", expectedId);\r",
+									"\r",
+									"// Verify that the satellite version is \"v1.0\".\r",
+									"const expectedVersion = pm.environment.get(\"version\");\r",
+									"pm.test(\"Satellite version is 'v1.0'\", () => {\r",
+									"    pm.expect(responseData.version).to.equal(expectedVersion);\r",
+									"});\r",
+									"\r",
+									"// Verify numeric fields.\r",
+									"const expectedHeight = parseFloat(pm.environment.get(\"height_km\"));      // e.g., 553.5673490877389\r",
+									"const expectedLatitude = parseFloat(pm.environment.get(\"latitude\"));      // e.g., -22.195023107488606\r",
+									"const expectedLongitude = parseFloat(pm.environment.get(\"longitude\"));    // e.g., 159.77312127185127\r",
+									"const expectedVelocity = parseFloat(pm.environment.get(\"velocity_kms\"));    // e.g., 7.584979177599639\r",
+									"\r",
+									"pm.test(\"Satellite height is correct\", () => {\r",
+									"    pm.expect(responseData.height_km).to.equal(expectedHeight);\r",
+									"});\r",
+									"pm.test(\"Satellite latitude is correct\", () => {\r",
+									"    pm.expect(responseData.latitude).to.equal(expectedLatitude);\r",
+									"});\r",
+									"pm.test(\"Satellite longitude is correct\", () => {\r",
+									"    pm.expect(responseData.longitude).to.equal(expectedLongitude);\r",
+									"});\r",
+									"pm.test(\"Satellite velocity is correct\", () => {\r",
+									"    pm.expect(responseData.velocity_kms).to.equal(expectedVelocity);\r",
+									"});\r",
+									"\r",
+									"// Optional: Compare OBJECT_NAME with expected value from starlink_1010.\r",
+									"let expectedStarlink;\r",
+									"try {\r",
+									"    expectedStarlink = JSON.parse(pm.environment.get(\"starlink_1010\"));\r",
+									"} catch (e) {\r",
+									"    console.error(\"Error parsing starlink_1010:\", e);\r",
+									"}\r",
+									"if (expectedStarlink && expectedStarlink.spaceTrack) {\r",
+									"    pm.test(\"OBJECT_NAME is correct\", () => {\r",
+									"        pm.expect(responseData.spaceTrack.OBJECT_NAME).to.equal(expectedStarlink.spaceTrack.OBJECT_NAME);\r",
+									"    });\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "id",
+								"value": "5eed7714096e590006985648",
+								"type": "text"
+							},
+							{
+								"key": "version",
+								"value": "v1.0",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/{{selected_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{selected_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Negative_Test",
+			"item": [
+				{
+					"name": "Request for Numeric Parameters",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// ----- Status Test ----- \r",
+									"pm.test(\"Status code is 401 Unauthorized\", function() {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Time Test -----\r",
+									"// Ensure the response is returned in less than 1000ms.\r",
+									"pm.test(\"Response time is less than 1000ms\", function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Size Test -----\r",
+									"// Ensure the response size is less than 500KB.\r",
+									"pm.test(\"Response size is less than 500KB\", function() {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(500 * 1024);\r",
+									"});\r",
+									"\r",
+									"// ----- Header Test -----\r",
+									"// Check that the Content-Type header is exactly \"text/plain; charset=utf-8\"\r",
+									"pm.test(\"Content-Type header is text/plain; charset=utf-8\", function() {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"// ----- Response Body Test -----\r",
+									"// Retrieve the plain text response and trim whitespace.\r",
+									"const bodyText = pm.response.text().trim();\r",
+									"\r",
+									"// Check that the response body exactly equals the expected video link.\r",
+									"pm.test(\"Response body returns the expected video link\", function() {\r",
+									"    pm.expect(bodyText).to.equal(\"https://youtu.be/RfiQYRn7fBg\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"query\": {\r\n    \"version\": \"v1.0\",\r\n    \"height_km\": 100,\r\n    \"latitude\": 0,\r\n    \"longitude\": 0,\r\n    \"velocity_kms\": 0\r\n  },\r\n  \"options\": {}\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}",
+							"host": [
+								"{{URL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Starlink 1010 - Invalid ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// ----- Status Test -----\r",
+									"pm.test(\"Status code is 404 for an invalid ID\", function() {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Time Test -----\r",
+									"pm.test(\"Response time is less than 1000ms\", function() {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"// ----- Response Size Test -----\r",
+									"pm.test(\"Response size is less than 500KB\", function() {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(500 * 1024);\r",
+									"});\r",
+									"\r",
+									"// ----- Header Test -----\r",
+									"pm.test(\"Content-Type header is present\", function() {\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.be.ok;\r",
+									"});\r",
+									"\r",
+									"// ----- Response Body Test -----\r",
+									"// Retrieve the response text.\r",
+									"const errorText = pm.response.text().trim();\r",
+									"pm.test(\"Error message is 'Not Found'\", function() {\r",
+									"    pm.expect(errorText).to.equal(\"Not Found\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/{{NotExisting_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{NotExisting_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
