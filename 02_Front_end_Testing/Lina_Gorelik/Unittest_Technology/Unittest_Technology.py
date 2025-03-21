@@ -1,4 +1,5 @@
 from builtins import AssertionError
+import Locator_Technology as lc
 
 #import HtmlTestRunner
 #import AllureReports
@@ -7,7 +8,7 @@ from selenium.common.exceptions import WebDriverException as WDE
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.remote.webelement import WebElement
 
-import Locator_Technology as lc
+
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.options import Options as FF_Options
 from selenium.webdriver.edge.options import Options as Edge_Options
