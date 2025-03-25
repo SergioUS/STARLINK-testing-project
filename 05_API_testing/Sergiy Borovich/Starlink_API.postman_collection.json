@@ -1,0 +1,538 @@
+{
+	"info": {
+		"_postman_id": "0db70a60-11cf-418a-bdac-b77b618c8984",
+		"name": "Starlink_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21527296"
+	},
+	"item": [
+		{
+			"name": "PositiveTests",
+			"item": [
+				{
+					"name": "Get all Starlink sats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"// Test to check the status code is 200\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Test to check the response size\r",
+									"\r",
+									"pm.test(\"Each element in the response array has a valid size 7000B\", function () {\r",
+									"    const responseArray = pm.response.json();\r",
+									"    responseArray.forEach((element) => {\r",
+									"        pm.expect(JSON.stringify(element).length).to.be.below(7000);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Test to check the response time is less than 600ms\r",
+									"\r",
+									"pm.test(\"Response time is less than 600ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(600);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Test to check the response headers\r",
+									"\r",
+									"pm.test(\"Content-Type is present and is application/json\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Cache-Control header is set to 'no-cache'\", function () {\r",
+									"    pm.expect(pm.response.headers.get(\"Cache-Control\")).to.include(\"max-age\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Strict-Transport-Security header is present and is set to a valid value\", function () {\r",
+									"    pm.response.to.have.header(\"Strict-Transport-Security\");\r",
+									"    pm.expect(pm.response.headers.get(\"Strict-Transport-Security\")).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"// Checking Body contains correct Keys\r",
+									"\r",
+									"pm.test(\"Body contains correct Keys\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"height_km\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"latitude\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"launch\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"longitude\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"velocity_kms\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"version\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"id\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}",
+							"host": [
+								"{{URL}}"
+							]
+						},
+						"description": "Getting all Starlink Sats. Seting all environment varvariables (see scripts)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get one Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"// checking response Status code\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// checking response Time\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"// checking response Size\r",
+									"\r",
+									"pm.test(\"Response Size is less than 1300B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(1300);\r",
+									"});\r",
+									"\r",
+									"// checking response body ID\r",
+									"\r",
+									"pm.test(\"Environment ID matches the ID in the response body\", function () {\r",
+									"    pm.expect(pm.environment.get(\"id\")).to.equal(pm.response.json().id);\r",
+									"});\r",
+									"\r",
+									"// Making sure we got correct Starlink (Starlink-23)\r",
+									"\r",
+									"pm.test(\"Verify spaceTrack object name is STARLINK-23\", function () {\r",
+									"    pm.expect(pm.response.json().spaceTrack.OBJECT_NAME).to.equal(\"STARLINK-23\");\r",
+									"});\r",
+									"\r",
+									"// Checking Body contains correct Keys\r",
+									"\r",
+									"pm.test(\"Body contains correct Keys\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"height_km\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"latitude\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"launch\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"longitude\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"velocity_kms\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"version\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"id\");\r",
+									"});\r",
+									"\r",
+									"// Checking Body contains correct Values\r",
+									"\r",
+									"pm.test(\"Body contains correct Values\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"5eb87d30ffd86e000604b378\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"v0.9\");\r",
+									"    pm.expect(pm.response.text()).to.include(null);\r",
+									"    pm.expect(pm.response.text()).to.include(null);\r",
+									"    pm.expect(pm.response.text()).to.include(null);\r",
+									"    pm.expect(pm.response.text()).to.include(null);\r",
+									"    pm.expect(pm.response.text()).to.include(\"5eed770f096e590006985611\");\r",
+									"});\r",
+									"\r",
+									"// Checking Header is Correct\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"Access-Control-Allow-Origin\", \"*\");\r",
+									"    pm.response.to.have.header(\"strict-transport-security\", \"max-age=15552000; includeSubDomains\");\r",
+									"    pm.response.to.have.header(\"Access-Control-Expose-Headers\", \"spacex-api-cache,spacex-api-response-time\");\r",
+									"    pm.response.to.have.header(\"Cache-Control\", \"max-age=3600\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{id}}"
+							]
+						},
+						"description": "Using id of specific Starling"
+					},
+					"response": []
+				},
+				{
+					"name": "Query for specific version Starlink sats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"// Test for status code \r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Test for response time  \r",
+									"\r",
+									"pm.test(\"Response time is less than 250ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(250);\r",
+									"});\r",
+									"\r",
+									"// Test for response size  \r",
+									"\r",
+									"pm.test(\"Response Size is less than 14000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(14000);\r",
+									"});\r",
+									"\r",
+									"// Test for content type header is present and correct\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"// test for version v1.0\r",
+									"\r",
+									"pm.test(\"All documents have version v1.0\", function() {\r",
+									"    var responseJSON = pm.response.json();\r",
+									"    responseJSON.docs.forEach(doc => {\r",
+									"        pm.expect(doc.version).to.equal(\"v1.0\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Test for header values are correct\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"Content-Length\", \"2816\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Access-Control-Allow-Origin\", \"*\");\r",
+									"    pm.response.to.have.header(\"Access-Control-Expose-Headers\", \"spacex-api-cache,spacex-api-response-time\");\r",
+									"    pm.response.to.have.header(\"alt-svc\", 'h3=\":443\"; ma=86400');\r",
+									"    pm.response.to.have.header(\"Cache-Control\", \"max-age=3600\");\r",
+									"    pm.response.to.have.header(\"etag\", '\"33b7-qua/0DL1yYF/HokV1LX0YIG2YHE\"');\r",
+									"    pm.response.to.have.header(\"strict-transport-security\", \"max-age=15552000; includeSubDomains\");\r",
+									"\r",
+									"});\r",
+									"\r",
+									"// Test for response body structure is valid\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"pm.test(\"Response body structure is valid\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('docs').that.is.an('array').and.not.empty;\r",
+									"    pm.expect(responseJSON).to.have.property('totalDocs').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('offset').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('limit').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('totalPages').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('page').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('pagingCounter').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('hasPrevPage').that.is.a('boolean');\r",
+									"    pm.expect(responseJSON).to.have.property('hasNextPage').that.is.a('boolean');\r",
+									"    pm.expect(responseJSON).to.have.property('prevPage').that.is.null;\r",
+									"    pm.expect(responseJSON).to.have.property('nextPage').that.is.a('number');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"// Test for schema validation of the response body\r",
+									"pm.test(\"Schema is valid\", function () {\r",
+									"    var schema = {\r",
+									"        type: \"object\",\r",
+									"        properties: {\r",
+									"            docs: {\r",
+									"                type: \"array\",\r",
+									"                items: {\r",
+									"                    type: \"object\"\r",
+									"                }\r",
+									"            },\r",
+									"            totalDocs: { type: \"number\" },\r",
+									"            offset: { type: \"number\" },\r",
+									"            limit: { type: \"number\" },\r",
+									"            totalPages: { type: \"number\" },\r",
+									"            page: { type: \"number\" },\r",
+									"            pagingCounter: { type: \"number\" },\r",
+									"            hasPrevPage: { type: \"boolean\" },\r",
+									"            hasNextPage: { type: \"boolean\" },\r",
+									"            prevPage: { type: \"null\" },\r",
+									"            nextPage: { type: \"number\" }\r",
+									"        },\r",
+									"        required: [\"docs\", \"totalDocs\", \"offset\", \"limit\", \"totalPages\", \"page\", \"pagingCounter\", \"hasPrevPage\", \"hasNextPage\", \"prevPage\", \"nextPage\"]\r",
+									"    };\r",
+									"\r",
+									"    pm.expect(tv4.validate(responseJSON, schema)).to.be.true;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"query\": { \"version\": \"v1.0\" },\r\n  \"options\": {}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/query",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"query"
+							]
+						},
+						"description": "selecting only prototype version of Starlink"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NegativeTesta",
+			"item": [
+				{
+					"name": "Get all Starlink sat using URL without starlink",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Check response Code\r",
+									"\r",
+									"if(pm.response.code === 200) {\r",
+									"    pm.test(\"Backend is available, response code is 200\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"} else if (pm.response.code === 400) {\r",
+									"    pm.test(\"Error\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"} else if (pm.response.code === 403) {\r",
+									"    pm.test(\"Forbiden\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"} else if (pm.response.code === 404) {\r",
+									"    pm.test(\"404 Not Found\", function () {\r",
+									"        pm.expect(true).to.be.true;\r",
+									"    });\r",
+									"} else if (pm.response.code === 422) {\r",
+									"    pm.test(\"The instance is not valid\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"} else {\r",
+									"    pm.test(\"Something went wrong. Check response body\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"// Check response time and size\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response Size is less than 50B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(50);\r",
+									"});\r",
+									"\r",
+									"// Check response body content\r",
+									"\r",
+									"pm.test(\"Response body 'Not Found'\", function () {\r",
+									"    var responseBody = pm.response.text();\r",
+									"    pm.expect(responseBody).to.include(\"Not Found\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Retrieve the response text from the body\", function () {\r",
+									"    var responseBody = pm.response.text();\r",
+									"    pm.test(\"Content-Type is present\", function () {\r",
+									"        pm.response.to.have.header(\"Content-Type\");\r",
+									"    });\r",
+									"    pm.expect(responseBody).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL_without_starlink}}",
+							"host": [
+								"{{URL_without_starlink}}"
+							]
+						},
+						"description": "Using incomplete URL (missing word \"starlink\""
+					},
+					"response": []
+				},
+				{
+					"name": "Create new Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"// Check response Code\r",
+									"\r",
+									"if(pm.response.code === 200) {\r",
+									"    pm.test(\"Backend is available, response code is 200\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"} else if (pm.response.code === 400) {\r",
+									"    pm.test(\"Error\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									" } else if (pm.response.code === 401) {\r",
+									"    pm.test(\"401 Unauthorized\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });   \r",
+									"} else if (pm.response.code === 403) {\r",
+									"    pm.test(\"Forbiden\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"} else if (pm.response.code === 404) {\r",
+									"    pm.test(\"404 Not Found\", function () {\r",
+									"        pm.expect(true).to.be.true;\r",
+									"    });\r",
+									"} else if (pm.response.code === 422) {\r",
+									"    pm.test(\"The instance is not valid\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"} else {\r",
+									"    pm.test(\"Something went wrong. Check response body\", function () {\r",
+									"        pm.expect(false).to.be.false;\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"// Check Time response\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"// Check Size response\r",
+									"\r",
+									"pm.test(\"Response Size is less than 50B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(50);\r",
+									"});\r",
+									"\r",
+									"// Check Body response\r",
+									"\r",
+									"pm.test(\"Response body 'https://youtu.be/RfiQYRn7fBg'\", function () {\r",
+									"    var responseBody = pm.response.text();\r",
+									"    pm.expect(responseBody).to.include(\"https://youtu.be/RfiQYRn7fBg\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "spacex-key",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OBJECT_NAME\": \"STARLINK-Maria\",\r\n    \"CENTER_NAME\": \"MARS\",\r\n    \"ORIGINATOR\": \"50 SPCS\",\r\n    \"id\": \"{{NotExisting_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}",
+							"host": [
+								"{{URL}}"
+							]
+						},
+						"description": "trying to create new Starlink-Maria"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id_list",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
