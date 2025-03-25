@@ -1,0 +1,680 @@
+{
+	"info": {
+		"_postman_id": "5e7d001b-d82c-41c3-ade8-aa01c568ae9d",
+		"name": "Starlink",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17766929"
+	},
+	"item": [
+		{
+			"name": "PositiveTests",
+			"item": [
+				{
+					"name": "Get all Starlink sats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Saving third id to environmet to use in (GET-one Starlink)\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"id\", jsonData[2].id);\r",
+									"\r",
+									"// Creating a list of all \"id\"\r",
+									"const response = pm.response.json();\r",
+									"const Valid_id = response.map(item => item.id);\r",
+									"pm.environment.set(\"id_list\",Valid_id)\r",
+									"\r",
+									"//Making a random \"id\"\r",
+									"const randomid = Valid_id[Math.floor(Math.random() * Valid_id.length)];\r",
+									"\r",
+									"//Setting id in environment to radom id \r",
+									"pm.environment.set(\"Random_id\",randomid);\r",
+									"\r",
+									"// Making Wrong id by adding \"z\" at the end of random id\r",
+									"const Wrong_id = randomid +\"z\"\r",
+									"pm.environment.set(\"NotExisting_id\",Wrong_id );\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 700ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(700);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 700000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(7000000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"Cache-Control\", \"max-age=3600\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Transfer-Encoding\", \"chunked\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Keys\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"ORIGINATOR\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"OBJECT_NAME\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"OBJECT_ID\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"CENTER_NAME\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"version\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"latitude\");\r",
+									"    \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Values\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"18 SPCS\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"STARLINK-29\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"2019-029J\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"EARTH\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"v0.9\");\r",
+									"    pm.expect(pm.response.text()).to.include(null);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify the 'id' of the first object in the response\", function () {\r",
+									"    pm.expect(pm.response.json()[0].id).to.eql(\"5eed770f096e59000698560d\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify the 'id' of the second object in the response\", function () {\r",
+									"    pm.expect(pm.response.json()[1].id).to.eql(\"5eed770f096e59000698560e\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify the 'id' of the third object in the response\", function () {\r",
+									"    pm.expect(pm.response.json()[2].id).to.eql(\"5eed770f096e59000698560f\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}",
+							"host": [
+								"{{URL}}"
+							]
+						},
+						"description": "Getting all Starlink Sats. Seting all environment varvariables (see scripts)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get one Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Making sure we got correct Starlink (Starlink-30)\r",
+									"pm.test(\"Environment ID matches the ID in the response body\", function () {\r",
+									"    pm.expect(pm.environment.get(\"id\")).to.equal(pm.response.json().id);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Object name is STARLINK-29\", function () {\r",
+									"    pm.expect(pm.response.json().spaceTrack.OBJECT_NAME).to.equal(\"STARLINK-29\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 1500B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(1500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"Cache-Control\", \"max-age=3600\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Keys\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"ORIGINATOR\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"OBJECT_NAME\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"OBJECT_ID\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"CENTER_NAME\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"version\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"latitude\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify the 'id' of the response\", function () {\r",
+									"    pm.expect(pm.response.json().id).to.eql(\"5eed770f096e59000698560f\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body 'version' is equal to v0.9\", function () {\r",
+									"    pm.expect(pm.response.json().version).to.eql(\"v0.9\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check if the OBJECT_ID is '2019-029J'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.spaceTrack.OBJECT_ID).to.eql(\"2019-029J\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{id}}"
+							]
+						},
+						"description": "Using id of specific Starling"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a random Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 1500B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(1500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"Cache-Control\", \"max-age=3600\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Keys\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"ORIGINATOR\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"OBJECT_NAME\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"OBJECT_ID\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"CENTER_NAME\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"version\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"latitude\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Environment ID matches the ID in the response body\", function () {\r",
+									"    pm.expect(pm.environment.get(\"Random_id\")).to.equal(pm.response.json().id);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{Random_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{Random_id}}"
+							]
+						},
+						"description": "Using random id"
+					},
+					"response": []
+				},
+				{
+					"name": "Query for specific version Starlink sats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 13000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(13000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"Cache-Control\", \"max-age=3600\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Keys\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"ORIGINATOR\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"OBJECT_NAME\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"OBJECT_ID\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"CENTER_NAME\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"version\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"latitude\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify the 'id' of the first object in the response\", function () {\r",
+									"    pm.expect(pm.response.json().docs[2].id).to.eql(\"5eed770f096e59000698560f\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Object name is STARLINK-29\", function () {\r",
+									"    pm.expect(pm.response.json().docs[2].spaceTrack.OBJECT_NAME).to.equal(\"STARLINK-29\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Check if the OBJECT_ID is '2019-029J'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.docs[2].spaceTrack.OBJECT_ID).to.eql(\"2019-029J\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"query\": {\r\n    \"version\": {{Version}}\r\n  },\r\n  \"options\": {}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/query",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"query"
+							]
+						},
+						"description": "selecting only prototype version of Starlink"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NegativeTesta",
+			"item": [
+				{
+					"name": "Get all Starlink sat using URL without starlink",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 2000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"expect-ct\", \"max-age=0\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Values\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Not Found\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL_without_starlink}}",
+							"host": [
+								"{{URL_without_starlink}}"
+							]
+						},
+						"description": "Using incomplete URL (missing word \"starlink\""
+					},
+					"response": []
+				},
+				{
+					"name": "Get Starlink with not existing id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 2000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"expect-ct\", \"max-age=0\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Values\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Not Found\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{NotExisting_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{NotExisting_id}}"
+							]
+						},
+						"description": "Trying get info using non exising id"
+					},
+					"response": []
+				},
+				{
+					"name": "Create new Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 2000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"expect-ct\", \"max-age=0\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Values\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"https://youtu.be/RfiQYRn7fBg\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "spacex-key",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OBJECT_NAME\": \"STARLINK-Maria\",\r\n    \"CENTER_NAME\": \"MARS\",\r\n    \"ORIGINATOR\": \"50 SPCS\",\r\n    \"id\": \"{{NotExisting_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}",
+							"host": [
+								"{{URL}}"
+							]
+						},
+						"description": "trying to create new Starlink-Maria"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 2000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"expect-ct\", \"max-age=0\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Values\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"https://youtu.be/RfiQYRn7fBg\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "spacex-key",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{NotExisting_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{NotExisting_id}}"
+							]
+						},
+						"description": "Trying to patch with non existing id"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 2000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is Correct\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"expect-ct\", \"max-age=0\");\r",
+									"    pm.response.to.have.header(\"Connection\", \"keep-alive\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains correct Values\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"https://youtu.be/RfiQYRn7fBg\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "spacex-key",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{NotExisting_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{NotExisting_id}}"
+							]
+						},
+						"description": "deleting with non existing id"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id_list",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
