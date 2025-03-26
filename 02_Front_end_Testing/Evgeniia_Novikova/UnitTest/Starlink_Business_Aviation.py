@@ -6,12 +6,9 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.edge.service import Service
 from faker import Faker
 import Helpers as h
-import HtmlTestRunner
-import AllureReports
 
 
 class ChromeTests(TestCase):
