@@ -5,8 +5,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC, wait
 from selenium.webdriver.support.wait import WebDriverWait
 
-import HtmlTestRunner
-import AllureReports
 
 t_url = "https://www.starlink.com/"
 t_url_2 = "https://www.starlink.com/technologe"
