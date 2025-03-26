@@ -267,7 +267,7 @@ if __name__ == "__main__":
     combined_suite = unittest.TestSuite([suite_positive, suite_negative])
 
     runner = HtmlTestRunner.HTMLTestRunner(
-        output='HTMLReports',
+        output='HtmlReports',
         report_name='StarlinkTests',
         combine_reports=True,
         verbosity=2

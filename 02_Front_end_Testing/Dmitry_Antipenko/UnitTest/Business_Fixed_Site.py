@@ -1,5 +1,5 @@
-# Unittest, includes Positive and Negative tests for Starlink site, Business/Fixed Site
-# prepared by Dmitry Antipenko
+# UnitTest, includes Positive and Negative tests for Starlink site, Business/Fixed Site
+# prepared by Dmitry_Antipenko
 
 import random
 import time
