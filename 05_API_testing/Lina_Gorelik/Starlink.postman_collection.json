@@ -1,0 +1,727 @@
+{
+	"info": {
+		"_postman_id": "2a9a480d-914f-4a66-8e57-ae0cfd8660c2",
+		"name": "Starlink",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42410809"
+	},
+	"item": [
+		{
+			"name": "PositiveTests",
+			"item": [
+				{
+					"name": "Query for specific version Starlink sats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(responseCode.code === 200) {\r",
+									"    tests[\"Backend is available, response code is 200\"] = true;\r",
+									"} else if (responseCode.code === 401) {\r",
+									"    tests[\"Not authorised, check access token or Log in\"] = false;\r",
+									"} else if (responseCode.code === 403) {\r",
+									"    tests[\"Forbiden\"] = false;\r",
+									"} else if (responseCode.code === 404) {\r",
+									"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+									"} else if (responseCode.code === 422) {\r",
+									"    tests[\"he instance is not valid\"] = false;\r",
+									"} else {\r",
+									"    tests[\"Something went wrong. Check response body\"] = false;\r",
+									"}\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"ID\", jsonData.id);\r",
+									"\r",
+									"tests['Response code is 200 OK'] = responseCode.code === 200;\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Successful POST request\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 202]);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response assertions\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.ok;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains string id\", () => {\r",
+									"    pm.expect(pm.response.text()).to.include(\"id\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 1000ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"tests['Response Time is Acceptable'] = responseTime < 1100;\r",
+									"\r",
+									"pm.test(\"Response size is less than 15000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(15000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is correct\", function(){\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response should be okay to process\", function () {\r",
+									"    pm.response.to.not.be.error;\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.not.have.jsonBody(\"error\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"query\": {\r\n    \"version\": {{Version}}\r\n  },\r\n  \"options\": {}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/query",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"query"
+							]
+						},
+						"description": "selecting only prototype version of Starlink"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Starlink sats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Saving first id to environmet to use in (GET-one Starlink)\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"id\", jsonData[3].id);\r",
+									"\r",
+									"if(responseCode.code === 200) {\r",
+									"    tests[\"Backend is available, response code is 200\"] = true;\r",
+									"} else if (responseCode.code === 401) {\r",
+									"    tests[\"Not authorised, check access token or Log in\"] = false;\r",
+									"} else if (responseCode.code === 403) {\r",
+									"    tests[\"Forbiden\"] = false;\r",
+									"} else if (responseCode.code === 404) {\r",
+									"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+									"} else if (responseCode.code === 422) {\r",
+									"    tests[\"he instance is not valid\"] = false;\r",
+									"} else {\r",
+									"    tests[\"Something went wrong. Check response body\"] = false;\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response assertions\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.ok;\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains string id\", () => {\r",
+									"    pm.expect(pm.response.text()).to.include(\"id\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 1500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1500);\r",
+									"});\r",
+									"\r",
+									"tests['Response Time is Acceptable'] = responseTime < 1600;\r",
+									"\r",
+									"pm.test(\"Response size is less than 5000000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(5000000);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Header is correct\", function(){\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"    pm.response.to.have.header(\"Server\", \"cloudflare\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response should be okay to process\", function () {\r",
+									"    pm.response.to.not.be.error;\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.not.have.jsonBody(\"error\");\r",
+									"});\r",
+									"\r",
+									"// Creating a list of all \"id\"\r",
+									"const response = pm.response.json();\r",
+									"const Valid_id = response.map(item => item.id);\r",
+									"pm.environment.set(\"id_list\",Valid_id)\r",
+									"\r",
+									"//Making a random \"id\"\r",
+									"const randomid = Valid_id[Math.floor(Math.random() * Valid_id.length)];\r",
+									"\r",
+									"//Setting id in environment to radom id \r",
+									"pm.environment.set(\"Random_id\",randomid);\r",
+									"\r",
+									"// Making Wrong id by adding \"z\" at the end of random id\r",
+									"const Wrong_id = randomid +\"xxx\"\r",
+									"pm.environment.set(\"NotExisting_id\",Wrong_id );"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}",
+							"host": [
+								"{{URL}}"
+							]
+						},
+						"description": "Getting all Starlink Sats. Seting all environment varvariables (see scripts)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get one Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Making sure we got correct Starlink (Starlink-30)\r",
+									"pm.test(\"Environment ID matches the ID in the response body\", function () {\r",
+									"    pm.expect(pm.environment.get(\"id\")).to.equal(pm.response.json().id);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Object name is STARLINK-76\", function () {\r",
+									"    pm.expect(pm.response.json().spaceTrack.OBJECT_NAME).to.equal(\"STARLINK-76\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Center name is EARTH\", function () {\r",
+									"    pm.expect(pm.response.json().spaceTrack.CENTER_NAME).to.equal(\"EARTH\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Object type is PAYLOAD\", function () {\r",
+									"    pm.expect(pm.response.json().spaceTrack.OBJECT_TYPE).to.equal(\"PAYLOAD\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Country code is US\", function () {\r",
+									"    pm.expect(pm.response.json().spaceTrack.COUNTRY_CODE).to.equal(\"US\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Site name is AFETR\", function () {\r",
+									"    pm.expect(pm.response.json().spaceTrack.SITE).to.equal(\"AFETR\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Connection is present\", function () {\r",
+									"    pm.response.to.have.header(\"Connection\",\"keep-alive\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Length is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Length\",\"764\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Encoding is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Encoding\",\"gzip\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 3KB\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(3072);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{id}}"
+							]
+						},
+						"description": "Using id of specific Starling"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a random Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 800ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(800);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response size is less than 2KB\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(2048);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Access control allow origin is present\", function () {\r",
+									"    pm.response.to.have.header(\"Access-Control-Allow-Origin\",\"*\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Spacex api cache online is true\", function () {\r",
+									"    pm.response.to.have.header(\"spacex-api-cache-online\",\"true\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Referrer policy is no referrer\", function () {\r",
+									"    pm.response.to.have.header(\"Referrer-Policy\",\"no-referrer\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{Random_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{Random_id}}"
+							]
+						},
+						"description": "Using random id"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "NegativeTesta",
+			"item": [
+				{
+					"name": "Create new Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 900ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(900);\r",
+									"});\r",
+									"\r",
+									"tests['Response Time is Acceptable'] = responseTime < 1000;\r",
+									"\r",
+									"pm.test(\"Response size is less than 2000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"if(responseCode.code === 401) {\r",
+									"    tests[\"Unauthorized, response code is 401\"] = true;\r",
+									"} else if (responseCode.code === 200) {\r",
+									"    tests[\"Backend is available, response code is 200\"] = false;\r",
+									" } else if (responseCode.code === 403) {\r",
+									"    tests[\"Forbiden\"] = false;\r",
+									"} else if (responseCode.code === 404) {\r",
+									"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+									"} else if (responseCode.code === 422) {\r",
+									"    tests[\"he instance is not valid\"] = false;\r",
+									"} else {\r",
+									"    tests[\"Something went wrong. Check response body\"] = false;\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Content-Type is correct\", function(){\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\"); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Connection is present\", function () {\r",
+									"    pm.response.to.have.header(\"Connection\",\"keep-alive\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "spacex-key",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"OBJECT_NAME\": \"STARLINK-Maria\",\r\n    \"CENTER_NAME\": \"MARS\",\r\n    \"ORIGINATOR\": \"50 SPCS\",\r\n    \"id\": \"{{NotExisting_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}",
+							"host": [
+								"{{URL}}"
+							]
+						},
+						"description": "trying to create new Starlink-Maria"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Starlink with not existing id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if(responseCode.code === 404) {\r",
+									"    tests[\"Not found, response code is 404\"] = true;\r",
+									"} else if (responseCode.code === 200) {\r",
+									"    tests[\"Backend is available, response code is 200\"] = false;\r",
+									"} else if (responseCode.code === 401) {\r",
+									"    tests[\"Not authorised, check access token or Log in\"] = false;\r",
+									"} else if (responseCode.code === 403) {\r",
+									"    tests[\"Forbiden\"] = false;\r",
+									"} else if (responseCode.code === 422) {\r",
+									"    tests[\"he instance is not valid\"] = false;\r",
+									"} else {\r",
+									"    tests[\"Something went wrong. Check response body\"] = false;\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"tests['Response Time is Acceptable'] = responseTime < 400;\r",
+									"\r",
+									"pm.test(\"Response size is less than 1500B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(1500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Cf-Cache-Status is present\", function () {\r",
+									"    pm.response.to.have.header(\"Cf-Cache-Status\",\"DYNAMIC\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{NotExisting_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{NotExisting_id}}"
+							]
+						},
+						"description": "Trying get info using non exising id"
+					},
+					"response": []
+				},
+				{
+					"name": "Get all Starlink sat using URL without starlink",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"tests['Response Time is Acceptable'] = responseTime < 400;\r",
+									"\r",
+									"pm.test(\"Response size is less than 1500B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(1500);\r",
+									"});\r",
+									"\r",
+									"if(responseCode.code === 404) {\r",
+									"    tests[\"Not found, response code is 404\"] = true;\r",
+									"} else if (responseCode.code === 200) {\r",
+									"    tests[\"Backend is available, response code is 200\"] = false;\r",
+									"} else if (responseCode.code === 401) {\r",
+									"    tests[\"Not authorised, check access token or Log in\"] = false;\r",
+									"} else if (responseCode.code === 403) {\r",
+									"    tests[\"Forbiden\"] = false;\r",
+									"} else if (responseCode.code === 422) {\r",
+									"    tests[\"he instance is not valid\"] = false;\r",
+									"} else {\r",
+									"    tests[\"Something went wrong. Check response body\"] = false;\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Content-Type is correct\", function(){\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Connection is present\", function () {\r",
+									"    pm.response.to.have.header(\"Connection\",\"keep-alive\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL_without_starlink}}",
+							"host": [
+								"{{URL_without_starlink}}"
+							]
+						},
+						"description": "Using incomplete URL (missing word \"starlink\""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"tests['Response Time is Acceptable'] = responseTime < 400;\r",
+									"\r",
+									"pm.test(\"Response size is less than 1500B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(1500);\r",
+									"});\r",
+									"\r",
+									"if(responseCode.code === 401) {\r",
+									"    tests[\"Unauthorized, response code is 401\"] = true;\r",
+									"} else if (responseCode.code === 200) {\r",
+									"    tests[\"Backend is available, response code is 200\"] = false;\r",
+									" } else if (responseCode.code === 403) {\r",
+									"    tests[\"Forbiden\"] = false;\r",
+									"} else if (responseCode.code === 404) {\r",
+									"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+									"} else if (responseCode.code === 422) {\r",
+									"    tests[\"he instance is not valid\"] = false;\r",
+									"} else {\r",
+									"    tests[\"Something went wrong. Check response body\"] = false;\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Content-Type is correct\", function(){\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Connection is present\", function () {\r",
+									"    pm.response.to.have.header(\"Connection\",\"keep-alive\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "spacex-key",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{NotExisting_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{NotExisting_id}}"
+							]
+						},
+						"description": "deleting with non existing id"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Starlink sat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"tests['Response Time is Acceptable'] = responseTime < 450;\r",
+									"\r",
+									"pm.test(\"Response size is less than 2000B\", function () {\r",
+									"    pm.expect(pm.response.responseSize).to.be.below(2000);\r",
+									"});\r",
+									"\r",
+									"if(responseCode.code === 401) {\r",
+									"    tests[\"Unauthorized, response code is 401\"] = true;\r",
+									"} else if (responseCode.code === 200) {\r",
+									"    tests[\"Backend is available, response code is 200\"] = false;\r",
+									" } else if (responseCode.code === 403) {\r",
+									"    tests[\"Forbiden\"] = false;\r",
+									"} else if (responseCode.code === 404) {\r",
+									"    tests[\"Not Found. Check if you made correct request\"] = false;\r",
+									"} else if (responseCode.code === 422) {\r",
+									"    tests[\"he instance is not valid\"] = false;\r",
+									"} else {\r",
+									"    tests[\"Something went wrong. Check response body\"] = false;\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Content-Type is correct\", function(){\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"text/plain; charset=utf-8\"); \r",
+									"});\r",
+									"\r",
+									"pm.test(\"Connection is present\", function () {\r",
+									"    pm.response.to.have.header(\"Connection\",\"keep-alive\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "spacex-key",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/{{NotExisting_id}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"{{NotExisting_id}}"
+							]
+						},
+						"description": "Trying to patch with non existing id"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id_list",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
